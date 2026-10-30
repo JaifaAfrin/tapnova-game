@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TapNova Game</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body {
+  margin: 0;
+  background: #11152b;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px 15px;
+}
+h1 { color: #bda5ff; }
+.balance {
+  font-size: 32px;
+  margin: 25px;
+  color: #ffd76a;
+}
+.coin {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  border: 8px solid #f8d36a;
+  background: linear-gradient(135deg,#a35cff,#5425a9);
+  color: white;
+  font-size: 65px;
+  margin: 20px auto;
+  cursor: pointer;
+  box-shadow: 0 0 35px #9155ff;
+}
+button {
+  padding: 14px 22px;
+  margin: 8px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 16px;
+  background: #8153e8;
+  color: white;
+}
+</style>
+</head>
+<body>
+<h1>🚀 TapNova</h1>
+<p>Welcome to TapNova Game!</p>
+
+<div class="balance">
+🪙 <span id="coins">0</span>
+</div>
+
+<button class="coin" onclick="tap()">🪙</button>
+<p>Tap to collect coins!</p>
+
+<button onclick="bonus()">🎁 Daily Bonus</button>
+<button onclick="upgrade()">⚡ Upgrade</button>
+<button onclick="invite()">👥 Invite Friends</button>
+
+<p>Level: <span id="level">1</span></p>
+<p>Tap Power: <span id="power">1</span></p>
+
+<script>
+let coins = Number(localStorage.coins || 0);
+let level = Number(localStorage.level || 1);
+let power = Number(localStorage.power || 1);
+
+function save() {
+  localStorage.coins = coins;
+  localStorage.level = level;
+  localStorage.power = power;
+  show();
+}
+
+function show() {
+  document.getElementById("coins").textContent = coins;
+  document.getElementById("level").textContent = level;
+  document.getElementById("power").textContent = power;
+}
+
+function tap() {
+  coins += power;
+  save();
+}
+
+function bonus() {
+  let today = new Date().toDateString();
+  if (localStorage.bonus === today) {
+    alert("Today's bonus already collected!");
+    return;
+  }
+  coins += 100;
+  localStorage.bonus = today;
+  save();
+  alert("100 Bonus Coins added!");
+}
+
+function upgrade() {
+  let cost = level * 100;
+  if (coins < cost) {
+    alert("Not enough coins!");
+    return;
+  }
+  coins -= cost;
+  level++;
+  power++;
+  save();
+  alert("Upgrade successful!");
+}
+
+function invite() {
+  if (navigator.share) {
+    navigator.share({
+      title: "TapNova",
+      text: "Come play TapNova!"
+    });
+  } else {
+    alert("Invite feature will be connected later.");
+  }
+}
+
+if (window.Telegram && window.Telegram.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
+}
+show();
+</script>
+</body>
+</html>
